@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Earning Pro - Ultra Stable</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- YOUR AD SCRIPT LINK -->
+    <script src="https://pl29529357.effectivecpmnetwork.com/8a/eb/f8/8aebf8cb0e3f80d1af52f152549810ca.js"></script>
+
+    <style>
+        :root { --primary: #00d2ff; --secondary: #3a7bd5; --dark-bg: #121212; --card-bg: #1e1e1e; --text-color: #ffffff; --success: #27ae60; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--dark-bg); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .hidden { display: none !important; }
+        
+        /* AD SECTION AT TOP */
+        #ad-banner-top {
+            width: 100%;
+            min-height: 60px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid var(--primary);
+            overflow: hidden;
+        }
+
+        header { padding: 12px; background: linear-gradient(to right, var(--secondary), var(--primary)); text-align: center; font-weight: 600; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .container { padding: 15px; flex: 1; overflow-y: auto; padding-bottom: 90px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; }
+        .balance-amount { font-size: 2rem; font-weight: 600; color: var(--primary); margin: 5px 0; }
+        
+        /* PLAYER STYLE */
+        .video-player-container { 
+            width: 100%; position: relative; padding-bottom: 56.25%; height: 0; 
+            background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #444; margin-bottom: 15px;
+        }
+        #youtube-player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* VIDEO LIST STYLE */
+        .list-header { font-size: 1rem; font-weight: 600; margin: 15px 0 10px 5px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .video-item {
+            display: flex; gap: 12px; background: #252525; padding: 10px; border-radius: 10px; margin-bottom: 10px;
+            cursor: pointer; border: 1px solid transparent; align-items: center;
+        }
+        .video-item:active { background: #333; border-color: var(--primary); }
+        .video-item img { width: 90px; height: 55px; border-radius: 5px; object-fit: cover; }
+        .video-item-info { flex: 1; }
+        .video-item-info p { margin: 0; font-size: 0.85rem; font-weight: 400; color: #eee; }
+        .video-item-info span { font-size: 0.7rem; color: #ff0000; font-weight: 600; }
+
+        .main-btn { background: linear-gradient(to right, var(--secondary), var(--primary)); color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { text-align: center; color: #666; font-size: 0.75rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.3rem; display: block; margin-bottom: 3px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; background: #2b2b2b; border: 1px solid #444; border-radius: 10px; color: white; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. TOP AD SECTION (Script will load here) -->
+    <div id="ad-banner-top">
+        <!-- The script tag above will auto-inject ads here if it's a banner script -->
+        <p style="font-size: 0.7rem; color: #555;">Advertisements</p>
+    </div>
+
+    <header>EARNING PRO</header>
+
+    <div class="container">
+        <!-- Watch Tab -->
+        <div id="tab-home" class="tab-content">
+            <div class="card">
+                <div style="font-size: 0.8rem; color: #aaa;">Tokens Balance</div>
+                <div class="balance-amount" id="user-balance">₹0.00</div>
+                <div id="user-info" style="color: #888; font-size: 0.8rem;">Checking status...</div>
+            </div>
+
+            <!-- PLAYER -->
+            <div class="video-player-container">
+                <div id="youtube-player"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="card" style="text-align: center; margin:0; padding:10px;"><small>Watch Time</small><div id="stat-watch">0h 0m</div></div>
+                <div class="card" style="text-align: center; margin:0; padding:10px;"><small>Rate</small><div id="stat-rate" style="color: var(--success);">₹20 / 4Hr</div></div>
+            </div>
+
+            <!-- DYNAMIC LIST -->
+            <div class="list-header"><i class="fab fa-youtube"></i> Up Next (Auto-Play)</div>
+            <div id="video-list-display">
+                <!-- Videos from Firebase load here -->
+            </div>
+        </div>
+
+        <!-- Wallet/Auth Tab -->
+        <div id="tab-wallet" class="tab-content hidden">
+            <div id="auth-section" class="card">
+                <div id="register-ui">
+                    <h3 style="text-align: center;">Join Now</h3>
+                    <input type="number" id="reg-mobile" placeholder="Mobile Number">
+                    <input type="password" id="reg-pass" placeholder="Password">
+                    <input type="text" id="reg-ref" placeholder="Referral Code (Optional)">
+                    <button class="main-btn" onclick="handleSignUp()">Sign Up</button>
+                    <p style="text-align: center; color:#aaa; cursor: pointer;" onclick="toggleAuth(false)">Already have an account? Login</p>
+                </div>
+                <div id="login-ui" class="hidden">
+                    <h3 style="text-align: center;">Login</h3>
+                    <input type="number" id="login-mobile" placeholder="Mobile Number">
+                    <input type="password" id="login-pass" placeholder="Password">
+                    <button class="main-btn" onclick="handleLogin()">Login</button>
+                    <p style="text-align: center; color:#aaa; cursor: pointer;" onclick="toggleAuth(true)">Don't have an account? Register</p>
+                </div>
+            </div>
+            
+            <div id="withdraw-section" class="card hidden">
+                <h3>Withdrawal</h3>
+                <input type="text" id="upi-id" placeholder="UPI ID">
+                <input type="number" id="draw-amount" placeholder="Amount">
+                <button class="main-btn" style="background: var(--success);" onclick="submitWithdrawal()">Request Payout</button>
+            </div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="tab-support" class="tab-content hidden">
+            <div class="card" style="text-align: center;">
+                <h3>Refer & Earn</h3>
+                <div id="ref-code-display" style="font-size: 1.8rem; color: var(--primary); font-weight: 600; margin: 15px 0;">------</div>
+                <p id="refer-note" style="font-size: 0.8rem; color: #aaa;">Earn ₹20 per referral!</p>
+                <button class="main-btn" onclick="shareApp()">Invite Friends</button>
+            </div>
+            <div class="card">
+                <h3>Support</h3>
+                <p>Email: <a href="mailto:earningpro205@gmail.com" style="color:var(--primary);">earningpro205@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)"><i class="fas fa-play-circle"></i>Watch</div>
+        <div class="nav-item" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i>Wallet</div>
+        <div class="nav-item" onclick="switchTab('support', this)"><i class="fas fa-headset"></i>Support</div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtV3ttujPOsINxOhvK-kH1lOMPgTNsJQs",
+            authDomain: "earning-pro-3df08.firebaseapp.com",
+            databaseURL: "https://earning-pro-3df08-default-rtdb.firebaseio.com",
+            projectId: "earning-pro-3df08",
+            storageBucket: "earning-pro-3df08.firebasestorage.app",
+            messagingSenderId: "1011009026854",
+            appId: "1:1011009026854:web:069c8fe167b770d7a51fe7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(), db = firebase.database();
+
+        let currentUser = null, userData = { balance: 0, watch_seconds: 0 };
+        let appSettings = { rate: 20, vids: [], min: 300, refer_rate: 20 };
+        
+        const backupVids = ["fBw86aEQpAI", "bORsBSm0YdQ", "pu9ONc5dsqI"];
+        let player = null, watchInterval = null, currentVidIndex = 0;
+
+        // --- YouTube API ---
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                videoId: backupVids[0],
+                playerVars: { 'autoplay': 1, 'playsinline': 1, 'modestbranding': 1, 'rel': 0 },
+                events: { 
+                    'onReady': () => { syncFirebaseVideos(); }, 
+                    'onStateChange': onPlayerStateChange,
+                    'onError': () => playNextVideo() 
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) startEarning();
+            else stopEarning();
+            if (event.data == YT.PlayerState.ENDED) playNextVideo();
+        }
+
+        function syncFirebaseVideos() {
+            db.ref("appSettings/config").on("value", (snap) => {
+                if(snap.exists()) {
+                    appSettings = snap.val();
+                    document.getElementById('stat-rate').innerText = `₹${appSettings.rate} / 4Hr`;
+                    renderVideoList();
+                } else {
+                    appSettings.vids = backupVids;
+                    renderVideoList();
+                }
+            });
+        }
+
+        function renderVideoList() {
+            const listDiv = document.getElementById('video-list-display');
+            listDiv.innerHTML = "";
+            const vids = (appSettings.vids && appSettings.vids.length > 0) ? appSettings.vids : backupVids;
+
+            vids.forEach((vid, index) => {
+                const vidId = extractVideoID(vid);
+                const item = document.createElement('div');
+                item.className = 'video-item';
+                item.onclick = () => { currentVidIndex = index; player.loadVideoById(vidId); };
+                item.innerHTML = `
+                    <img src="https://img.youtube.com/vi/${vidId}/mqdefault.jpg">
+                    <div class="video-item-info">
+                        <p>Video Tutorial ${index + 1}</p>
+                        <span><i class="fab fa-youtube"></i> YouTube</span>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+
+        function playNextVideo() {
+            const vids = (appSettings.vids && appSettings.vids.length > 0) ? appSettings.vids : backupVids;
+            currentVidIndex++;
+            if (currentVidIndex >= vids.length) currentVidIndex = 0;
+            player.loadVideoById(extractVideoID(vids[currentVidIndex]));
+        }
+
+        function extractVideoID(url) {
+            if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+            if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+            return url;
+        }
+
+        // --- Core Earning & Auth ---
+        function startEarning() {
+            if(!currentUser) return;
+            clearInterval(watchInterval);
+            watchInterval = setInterval(() => {
+                let r = (appSettings.rate || 20) / 14400; 
+                userData.balance += r;
+                userData.watch_seconds += 1;
+                if(userData.watch_seconds % 15 === 0) {
+                    db.ref("users/" + currentUser.uid).update({ balance: userData.balance, watch_seconds: userData.watch_seconds });
+                }
+                updateUI();
+            }, 1000);
+        }
+
+        function stopEarning() { clearInterval(watchInterval); }
+
+        function updateUI() {
+            document.getElementById('user-balance').innerText = "₹" + (userData.balance || 0).toFixed(2);
+            let h = Math.floor(userData.watch_seconds / 3600), m = Math.floor((userData.watch_seconds % 3600) / 60);
+            document.getElementById('stat-watch').innerText = `${h}h ${m}m`;
+        }
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                currentUser = user;
+                db.ref("users/" + user.uid).on("value", (s) => {
+                    if(s.exists()) {
+                        userData = s.val();
+                        document.getElementById('auth-section').classList.add('hidden');
+                        document.getElementById('withdraw-section').classList.remove('hidden');
+                        document.getElementById('ref-code-display').innerText = userData.referral_code;
+                        document.getElementById('user-info').innerText = "ID: " + userData.referral_code;
+                        updateUI();
+                    }
+                });
+            }
+        });
+
+        async function handleSignUp() {
+            const m = document.getElementById('reg-mobile').value, p = document.getElementById('reg-pass').value, refCode = document.getElementById('reg-ref').value;
+            if(m.length < 10) return alert("Enter valid mobile number");
+            try {
+                const res = await auth.createUserWithEmailAndPassword(m + "@earningpro.com", p);
+                const myReferralCode = Math.floor(100000 + Math.random() * 900000).toString(); 
+                if(refCode && refCode.length === 6) {
+                    const q = await db.ref("users").orderByChild("referral_code").equalTo(refCode).once("value");
+                    if(q.exists()) {
+                        const rUid = Object.keys(q.val())[0];
+                        await db.ref("users/" + rUid + "/balance").transaction(c => (c || 0) + (parseFloat(appSettings.refer_rate) || 20));
+                    }
+                }
+                await db.ref("users/" + res.user.uid).set({ mobile: m, balance: 0, watch_seconds: 0, referral_code: myReferralCode, referred_by: refCode || "" });
+                alert("Success!");
+            } catch (e) { alert(e.message); }
+        }
+
+        async function handleLogin() {
+            const m = document.getElementById('login-mobile').value, p = document.getElementById('login-pass').value;
+            try { await auth.signInWithEmailAndPassword(m + "@earningpro.com", p); } catch(e) { alert("Login Failed"); }
+        }
+
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-'+id).classList.remove('hidden');
+            el.classList.add('active');
+        }
+
+        function toggleAuth(reg) {
+            document.getElementById('register-ui').classList.toggle('hidden', !reg);
+            document.getElementById('login-ui').classList.toggle('hidden', reg);
+        }
+
+        async function submitWithdrawal() {
+            const upi = document.getElementById('upi-id').value, amt = parseFloat(document.getElementById('draw-amount').value);
+            if(!upi.includes('@') || amt < (appSettings.min || 300) || amt > userData.balance) return alert("Invalid Amount or UPI");
+            await db.ref("users/" + currentUser.uid).update({ balance: userData.balance - amt });
+            await db.ref("withdrawals").push({ uid: currentUser.uid, upi, amount: amt, status: "Pending", timestamp: Date.now() });
+            alert("Withdrawal Requested!");
+        }
+
+        function shareApp() {
+            const msg = `Join Earning Pro! My Code: ${userData.referral_code}\nLink: ${appSettings.app_link || ''}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>
